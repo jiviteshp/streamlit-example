@@ -1,38 +1,77 @@
-from collections import namedtuple
-import altair as alt
-import math
-import pandas as pd
 import streamlit as st
+from transformers import AutoModelForSequenceClassification, AutoTokenizer
+import torch
+from scipy.special import softmax
+import matplotlib.pyplot as plt
+import numpy as np
 
-"""
-# Welcome to Streamlit!
+def preprocess_tweet(tweet):
+    tweet_words = []
+    for word in tweet.split(' '):
+        if word.startswith('@') and len(word) > 1:
+            word = '@user'
+        elif word.startswith('http'):
+            word = "http"
+        tweet_words.append(word)
+    return " ".join(tweet_words)
 
-Edit `/streamlit_app.py` to customize this app to your heart's desire :heart:
+def analyze_sentiment(tweet, model, tokenizer):
+    tweet_proc = preprocess_tweet(tweet)
+    encoded_tweet = tokenizer(tweet_proc, return_tensors='pt')
+    output = model(**encoded_tweet)
+    scores = output[0][0].detach().numpy()
+    scores = softmax(scores)
+    return scores
 
-If you have any questions, checkout our [documentation](https://docs.streamlit.io) and [community
-forums](https://discuss.streamlit.io).
+def main():
+    st.title("Twitter Sentiment Analysis")
+    st.header("Input your tweets here (comma-separated):")
+    user_input = st.text_area("Enter tweets:")
 
-In the meantime, below is an example of what you can do with just a few lines of code:
-"""
+    if st.button("Analyze Sentiment"):
+        tweets = user_input.split(',')
 
+        if not tweets[0]:
+            st.warning("Please enter at least one tweet.")
+            return
 
-with st.echo(code_location='below'):
-    total_points = st.slider("Number of points in spiral", 1, 5000, 2000)
-    num_turns = st.slider("Number of turns in spiral", 1, 100, 9)
+        model_name = "cardiffnlp/twitter-roberta-base-sentiment"
+        model = AutoModelForSequenceClassification.from_pretrained(model_name)
+        tokenizer = AutoTokenizer.from_pretrained(model_name)
 
-    Point = namedtuple('Point', 'x y')
-    data = []
+        negative_scores, neutral_scores, positive_scores = [], [], []
 
-    points_per_turn = total_points / num_turns
+        for i, tweet in enumerate(tweets, start=1):
+            scores = analyze_sentiment(tweet, model, tokenizer)
+            negative_scores.append(scores[0])
+            neutral_scores.append(scores[1])
+            positive_scores.append(scores[2])
 
-    for curr_point_num in range(total_points):
-        curr_turn, i = divmod(curr_point_num, points_per_turn)
-        angle = (curr_turn + 1) * 2 * math.pi * i / points_per_turn
-        radius = curr_point_num / total_points
-        x = radius * math.cos(angle)
-        y = radius * math.sin(angle)
-        data.append(Point(x, y))
+        st.subheader("Sentiment Analysis Results:")
+        for i, tweet in enumerate(tweets, start=1):
+            st.write(f"**Tweet {i}:** '{tweet}'")
+            st.write("Sentiment Scores:")
+            st.write(f"- Negative 😞: {negative_scores[i-1]:.5f}")
+            st.write(f"- Neutral 😐: {neutral_scores[i-1]:.5f}")
+            st.write(f"- Positive 😀: {positive_scores[i-1]:.5f}")
 
-    st.altair_chart(alt.Chart(pd.DataFrame(data), height=500, width=500)
-        .mark_circle(color='#0068c9', opacity=0.5)
-        .encode(x='x:Q', y='y:Q'))
+        fig, ax = plt.subplots(figsize=(10, 6))
+        x = np.arange(len(tweets))
+        colors = ['red', 'gray', 'green']
+        bar_width = 0.2
+
+        ax.bar(x, negative_scores, width=bar_width, label='Negative 😞', color=colors[0])
+        ax.bar(x + bar_width, neutral_scores, width=bar_width, label='Neutral 😐', color=colors[1])
+        ax.bar(x + 2 * bar_width, positive_scores, width=bar_width, label='Positive 😀', color=colors[2])
+
+        ax.set_xlabel('Tweets')
+        ax.set_ylabel('Sentiment Scores')
+        ax.set_title('Sentiment Analysis Results')
+        ax.set_xticks(x + bar_width)
+        ax.set_xticklabels(tweets, rotation=46, ha="right")
+        ax.legend()
+
+        st.pyplot(fig)
+
+if __name__ == "__main__":
+    main()
