@@ -79,3 +79,9 @@ if st.button("Analyze Sentiment"):
 
     # Display the bar chart using st.pyplot()
     st.pyplot(fig)
+    if st.button("Clear"):
+    user_input = ""  # Clear user input
+    tweets = []  # Clear stored tweets
+    negative_scores = []  # Clear sentiment scores
+    neutral_scores = []
+    positive_scores = []
