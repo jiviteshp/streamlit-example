@@ -34,7 +34,7 @@ if st.button("Analyze Sentiment"):
         for word in tweet.split(' '):
             if word.startswith('@') and len(word) > 1:
                 word = '@user'
-            elif word.startswith('http'):
+            elif word starts with('http'):
                 word = "http"
             tweet_words.append(word)
 
@@ -79,7 +79,9 @@ if st.button("Analyze Sentiment"):
 
     # Display the bar chart using st.pyplot()
     st.pyplot(fig)
-    if st.button("Clear"):
+
+# Add a clear button to reset the input and results
+if st.button("Clear"):
     user_input = ""  # Clear user input
     tweets = []  # Clear stored tweets
     negative_scores = []  # Clear sentiment scores
