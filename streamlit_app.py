@@ -34,7 +34,7 @@ if st.button("Analyze Sentiment"):
         for word in tweet.split(' '):
             if word.startswith('@') and len(word) > 1:
                 word = '@user'
-            elif word starts with('http'):
+            elif word.startswith('http'):
                 word = "http"
             tweet_words.append(word)
 
@@ -87,3 +87,6 @@ if st.button("Clear"):
     negative_scores = []  # Clear sentiment scores
     neutral_scores = []
     positive_scores = []
+
+
+
