@@ -82,9 +82,13 @@ if st.button("Predict Sentiment"):
     st.pyplot(fig)
 
 # Add a clear button to reset the input and results
+# Add a clear button to reset the input and results
 if st.button("Clear"):
     user_input = ""  # Clear user input
     tweets = []  # Clear stored tweets
     negative_scores = []  # Clear sentiment scores
     neutral_scores = []
     positive_scores = []
+    # Clear the text box by updating it with an empty string
+    st.text_area("Enter tweets:", value="")
+
