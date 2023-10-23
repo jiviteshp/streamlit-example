@@ -89,4 +89,7 @@ if st.button("Clear"):
     negative_scores = []  # Clear sentiment scores
     neutral_scores = []
     positive_scores = []
+st.echo()
+>>> with st.echo():
+>>>     st.write('Code will be executed and printed')
 
