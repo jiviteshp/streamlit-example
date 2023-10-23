@@ -89,6 +89,4 @@ if st.button("Clear"):
     negative_scores = []  # Clear sentiment scores
     neutral_scores = []
     positive_scores = []
-    # Clear the text box by updating it with an empty string
-    st.text_area("Enter tweets:", value="")
 
