@@ -11,16 +11,16 @@ model2 = AutoModelForSequenceClassification.from_pretrained(roberta)
 tokenizer = AutoTokenizer.from_pretrained(roberta)
 labels = ['Negative 😞', 'Neutral 😐', 'Positive 😀']
 
-st.title("Twitter Sentiment Analysis")
+st.title("A STUDY ON SENTIMENTAL ANALYSIS OF MENTAL ILLNESS, CONNOTATIONS OF TEXTS")
 
 # Input area
 st.header("Input your tweets here (comma-separated):")
 user_input = st.text_area("Enter tweets:")
 
 # Analyze sentiment
-if st.button("Analyze Sentiment"):
+if st.button("Predict Sentiment"):
     tweets = user_input.split(',')
-    
+
     # Lists to store sentiment scores
     negative_scores = []
     neutral_scores = []
@@ -44,7 +44,7 @@ if st.button("Analyze Sentiment"):
         encoded_tweet = tokenizer(tweet_proc, return_tensors='pt')
         output = model2(**encoded_tweet)
 
-        scores = output[0][0].detach().numpy()
+        scores = output.logits[0].detach().numpy()
         scores = softmax(scores)
 
         negative_scores.append(scores[0])
@@ -62,6 +62,7 @@ if st.button("Analyze Sentiment"):
 
     # Create a bar chart for sentiment scores
     fig, ax = plt.subplots(figsize=(10, 6))
+    fig.patch.set_facecolor('yellow')
     x = np.arange(len(tweets))
     colors = ['red', 'gray', 'green']
     bar_width = 0.2
@@ -87,6 +88,3 @@ if st.button("Clear"):
     negative_scores = []  # Clear sentiment scores
     neutral_scores = []
     positive_scores = []
-
-
-
