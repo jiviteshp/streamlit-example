@@ -1,7 +1,5 @@
-pandas
 streamlit
 transformers 
-torch
 scipy
 matplotlib
 numpy
