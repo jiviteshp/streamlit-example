@@ -3,3 +3,4 @@ transformers
 scipy
 matplotlib
 numpy
+torch
