@@ -1,6 +1,5 @@
 import streamlit as st
 from transformers import AutoModelForSequenceClassification, AutoTokenizer
-import torch
 from scipy.special import softmax
 import matplotlib.pyplot as plt
 import numpy as np
@@ -93,7 +92,6 @@ if st.button("Clear"):
 st.code("""
 import streamlit as st
 from transformers import AutoModelForSequenceClassification, AutoTokenizer
-import torch
 from scipy.special import softmax
 import matplotlib.pyplot as plt
 import numpy as np
