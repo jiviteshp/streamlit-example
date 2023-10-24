@@ -1,4 +1,5 @@
 import streamlit as st
+import torch
 from transformers import AutoModelForSequenceClassification, AutoTokenizer
 from scipy.special import softmax
 import matplotlib.pyplot as plt
